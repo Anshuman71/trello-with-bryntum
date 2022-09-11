@@ -11,9 +11,20 @@ import "./App.css";
 function App() {
   const taskBoard = useRef();
   const project = useRef();
-  const [tasks] = useState(projectData.tasks);
+  const [tasks, setTasks] = useState(projectData.tasks);
   const [assignments] = useState(projectData.assignments);
   const [resources] = useState(projectData.users);
+  function onChange(change) {
+    if(change.action === 'add') {
+      setTasks(() => [...tasks, change.records[0].data])
+    }
+    if(change.action === 'update') {
+      const updatedTask =  change.record.data
+      const newTasks = [...tasks].filter(item => item.id !== updatedTask.id)
+      setTasks(() => [...newTasks, updatedTask])
+    }
+  }
+
   return (
     <>
       <BryntumProjectModel
@@ -21,6 +32,7 @@ function App() {
         tasks={tasks}
         assignments={assignments}
         resources={resources}
+        onChange={onChange}
       />
       <nav className={"header"}>
         <h1 className={"heading"}>Trello using Bryntum TaskBoard</h1>
