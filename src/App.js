@@ -1,24 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React, { useRef, useState } from "react";
+import {
+  BryntumTaskBoard,
+  BryntumProjectModel,
+} from "@bryntum/taskboard-react";
+import { taskBoardConfig } from "./AppConfig";
+import { projectData } from "./AppData";
+import "./App.css";
 
 function App() {
+  const taskBoard = useRef();
+  const project = useRef();
+  const [tasks] = useState(projectData.tasks);
+  const [assignments] = useState(projectData.assignments);
+  const [resources] = useState(projectData.users);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <>
+      <BryntumProjectModel
+        ref={project}
+        tasks={tasks}
+        assignments={assignments}
+        resources={resources}
+      />
+      <nav className={"header"}>
+        <h1 className={"heading"}>Trello using Bryntum TaskBoard</h1>
+        <button
+          className={"add-column"}
+          onClick={() => {
+            const value = prompt("Column name");
+            if (value) {
+              taskBoard.current.instance.columns.add({
+                id: value,
+                text: value,
+              });
+            }
+          }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          Add column
+        </button>
+      </nav>
+      <BryntumTaskBoard
+        ref={taskBoard}
+        project={project}
+        columnDragFeature
+        taskTooltipFeature
+        {...taskBoardConfig}
+      />
+    </>
   );
 }
 
